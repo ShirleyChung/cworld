@@ -1,0 +1,3 @@
+/Users/shirley/cworld/build/CMakeFiles/cworld.dir
+/Users/shirley/cworld/build/CMakeFiles/edit_cache.dir
+/Users/shirley/cworld/build/CMakeFiles/rebuild_cache.dir
