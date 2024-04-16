@@ -1,5 +1,6 @@
 #include <iostream>
 #include "rapidjson/document.h"
+#include "world.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ int main(int argc, char* argv[])
         cout << "member: code = " << document["code"].GetInt() << endl;
  	}
 	}
+    World w;
 	cout << "hello~~~~" << endl;
+    cout << "world: " << w.ToString();
 	return 0;
 }
