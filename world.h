@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include "prompt.h"
 
 struct Location
 {
@@ -26,13 +27,29 @@ struct Object
 
 class World : public Object
 {
+    void ExecuteCommand(std::string &cmd)
+    {
+        std::cout << "world checking " << cmd << "..." << std::endl;
+    }
+
     std::map<std::string, Object> objects_map_;
-    public:
+
+public:
     World()
     {
         location_ = Location(0, 0);
     }
     ~World() {}
+
+    static bool OnCommand(std::string &cmd, void *pObj)
+    {
+        World *pThis = (World *)pObj;
+        if (pThis)
+        {
+            pThis->ExecuteCommand(cmd);
+        }
+        return true;
+    }
 };
 
 #define _cworld_Define_2024_

@@ -1,4 +1,3 @@
-#include <iostream>
 #include "rapidjson/document.h"
 #include "world.h"
 
@@ -16,11 +15,14 @@ int main(int argc, char* argv[])
         const rapidjson::Value& value = document["hello"];
         if (value.IsString()) {
             std::cout << "hello: " << value.GetString() << std::endl;
-        cout << "member: code = " << document["code"].GetInt() << endl;
- 	}
+            cout << "member: code = " << document["code"].GetInt() << endl;
+ 	    }
 	}
     World w;
 	cout << "hello~~~~" << endl;
-    cout << "world: " << w.ToString();
+    cout << "world: " << w.ToString() << endl;
+    Prompt pmt;
+    pmt.RegisterCmdCallback((CMD_CALLBACK)World::OnCommand, (void*)&w);
+    pmt.run();
 	return 0;
 }
