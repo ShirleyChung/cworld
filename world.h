@@ -5,6 +5,8 @@
 #include <sstream>
 #include "prompt.h"
 
+using namespace std;
+
 struct Location
 {
     int x_;
@@ -25,9 +27,9 @@ struct Object
     }
 };
 
-class World : public Object
+class World : public Object, public CommandReciever
 {
-    void ExecuteCommand(std::string &cmd)
+    void ExecuteCommand(const std::string &cmd)
     {
         std::cout << "world checking " << cmd << "..." << std::endl;
     }
@@ -38,16 +40,12 @@ public:
     World()
     {
         location_ = Location(0, 0);
+        std::cout << "-= World Start =-" << endl;
     }
     ~World() {}
 
-    static bool OnCommand(std::string &cmd, void *pObj)
-    {
-        World *pThis = (World *)pObj;
-        if (pThis)
-        {
-            pThis->ExecuteCommand(cmd);
-        }
+    virtual bool OnCommand(const std::string& cmd) {
+        ExecuteCommand(cmd);
         return true;
     }
 };

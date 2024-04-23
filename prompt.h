@@ -2,46 +2,42 @@
 #include <string>
 #include <list>
 
-typedef bool(*CMD_CALLBACK)(const std::string& cmd, void* pObj);
-
-struct CBData {
-    CMD_CALLBACK cb_;
-    void* pObj_;
+// Command callback interface
+struct CommandReciever {
+    virtual bool OnCommand(const std::string& cmd) = 0;
 };
 
+// Prompt and Input Command to execute
 class Prompt 
 {
     std::string prompt_;
     std::string cmd_;
-    typedef std::list<CBData> CBDAT_LIST; 
-    CBDAT_LIST cbList_;
+    typedef std::list<CommandReciever*> CMDRCV_LIST;
+    CMDRCV_LIST cmdrcvList_;
 public:
     Prompt()
     : prompt_("enter command")
     {}
 
     // 註冊命令呼叫Callback
-    void RegisterCmdCallback(CMD_CALLBACK cb, void* pObj) {
-        CBData cbDat;
-        cbDat.cb_ = cb;
-        cbDat.pObj_ = pObj;
-        cbList_.push_back(cbDat);
+    void RegisterCmdCallback(CommandReciever* pCmdRcv) {
+        cmdrcvList_.push_back(pCmdRcv);
     }
 
     // 取消註冊Callback
-    void UnRegisterCmdCallback(void* pObj) {
-        for (CBDAT_LIST::iterator i = cbList_.begin(); i != cbList_.end(); ++i) {
-            if (i->pObj_ == pObj) {
-                cbList_.erase(i);
-                i = cbList_.begin();
+    void UnRegisterCmdCallback(CommandReciever* pObj) {
+        for (CMDRCV_LIST::iterator i = cmdrcvList_.begin(); i != cmdrcvList_.end(); ++i) {
+            if (*i == pObj) {
+                cmdrcvList_.erase(i);
+                i = cmdrcvList_.begin();
             }
         }
     }
 
     // 呼叫所註冊的Callback
     void ExecuteCommand(const std::string& cmd) {
-        for (CBDAT_LIST::iterator i = cbList_.begin(); i != cbList_.end(); ++i) {
-            i->cb_(cmd, i->pObj_);
+        for (CMDRCV_LIST::iterator i = cmdrcvList_.begin(); i != cmdrcvList_.end(); ++i) {
+            (*i)->OnCommand(cmd);
         }
     }
 

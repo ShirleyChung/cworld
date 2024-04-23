@@ -19,10 +19,8 @@ int main(int argc, char* argv[])
  	    }
 	}
     World w;
-	cout << "hello~~~~" << endl;
-    cout << "world: " << w.ToString() << endl;
     Prompt pmt;
-    pmt.RegisterCmdCallback((CMD_CALLBACK)World::OnCommand, (void*)&w);
+    pmt.RegisterCmdCallback(&w);
     pmt.run();
 	return 0;
 }
