@@ -14,9 +14,11 @@ class Prompt
     std::string cmd_;
     typedef std::list<CommandReciever*> CMDRCV_LIST;
     CMDRCV_LIST cmdrcvList_;
+    bool loopWork_;
 public:
     Prompt()
     : prompt_("enter command")
+    , loopWork_(true)
     {}
 
     // 註冊命令呼叫Callback
@@ -36,15 +38,18 @@ public:
 
     // 呼叫所註冊的Callback
     void ExecuteCommand(const std::string& cmd) {
+        bool ok = false;
         for (CMDRCV_LIST::iterator i = cmdrcvList_.begin(); i != cmdrcvList_.end(); ++i) {
-            (*i)->OnCommand(cmd);
+            ok |= (*i)->OnCommand(cmd);
         }
+        if (!ok)
+            std::cout << "Unknown command: " << cmd << std::endl;
     }
 
     // 檢查是否Quit
     bool QuitCommand(const std::string& cmd) {
         if (cmd == "quit" || cmd == "exit" || cmd == "q") {
-            std::cout << cmd << std::endl;
+            std::cout << "Finish process. Bye." << std::endl;
             return true;
         }
         return false;
@@ -52,10 +57,12 @@ public:
 
     //  執行命令
     void run() {
-        do {
+        while(loopWork_) {
             std::cout << prompt_ << " > ";
             std::cin >> cmd_;
+            if (QuitCommand(cmd_))
+                break;
             ExecuteCommand(cmd_);
-        } while (!QuitCommand(cmd_));
+        }
     }
 };
