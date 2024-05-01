@@ -2,44 +2,27 @@
 #define _person_define_2024_
 
 #include <map>
-#include <string>
-#include <sstream>
-#include <map>
-#include "rapidjson/document.h"
-#include "prompt.h"
-
-#include "rapidjson/stringbuffer.h"
-#include <rapidjson/writer.h>
-
-using namespace std;
-using namespace rapidjson;
+#include "object.h"
 
 /* 定義一個人物的資料 */
-class Person {
-    /// @brief 人物特徵資料
-    Document characters_;
+class Person: public JSONObj {
 
 public:
-    Person() {
-
+    Person(const std::string& str = "") {
+        if (str.empty()) {
+            std::stringstream ss;
+            ss << "{\"name\":\"person"<< rand() << "\"}";
+            LoadFromStr(ss.str());
+        } else
+            LoadFromStr(str.c_str());
     }
-    void LoadFromStr(const char* str) {
-        characters_.Parse(str);
+    Person& operator=(const Person& rhs) {
+        characters_.SetObject();
+        characters_.CopyFrom(rhs.characters_, characters_.GetAllocator());
+        return *this;
     }
-    // 轉成字串以便整合儲成檔案
-    const std::string ToString() {
-        StringBuffer buffer;
-        Writer<StringBuffer> writer(buffer);
-        characters_.Accept(writer);
-        
-        std::string str = buffer.GetString();
-        return str;
-    }
-    // 取得人物的一個特徵
-    const std::string GetCharacter(const std::string& key) {
-        const rapidjson::Value& value = characters_[key.c_str()];
-        return value.IsString()? value.GetString(): "";
- 	    
+    std::string GetName() {
+        return GetCharacter("name");
     }
 };
 

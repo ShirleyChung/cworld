@@ -3,6 +3,7 @@
 
 #include "person.h"
 #include "prompt.h"
+#include <fstream>
 
 using namespace std;
 
@@ -26,9 +27,44 @@ struct Object
     }
 };
 
+template<class T>
+class JSONObjManager {
+protected:
+    typedef std::map<std::string, T> OBJECTMAP;
+    OBJECTMAP objMap_;
+public:
+    JSONObjManager () {        
+    }
+    void LoadFromFile(const std::string& fn) {
+        cout << "-= Load from " << fn << "=- " << endl;
+        std::ifstream fs(fn.c_str());
+        if (fs) {
+            std::string line;
+            while (getline(fs, line)) {
+                T p(line);
+                objMap_[p.GetName()] = p;
+            }
+        }
+    }
+};
+
+class PersonManager: public JSONObjManager<Person> {
+    public:
+    PersonManager() {
+        LoadFromFile("data/person.data");
+    }
+    void ListPersons() {
+        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+            cout << i->first << i->second.GetCharacter("brief") << endl;
+        }
+    }
+};
+
 
 class World : public Object, public CommandReciever
 {
+    PersonManager personMgr_;
+
     typedef std::map<std::string, Object> OBJMAP;
     OBJMAP mapObjects_;
 
@@ -37,6 +73,11 @@ class World : public Object, public CommandReciever
     typedef std::map<std::string, CMD_CALLBACK> CMDCBK_MAP;
 
     CMDCBK_MAP mapCmdCb_;
+
+    const std::string ShowPersons(const std::string& params) {
+        personMgr_.ListPersons();
+        return "";
+    }
 
     const std::string ListItems(const std::string& params) {
         std::cout << "listing item..." << std::endl;
@@ -51,6 +92,7 @@ class World : public Object, public CommandReciever
 
     void SetupCmdLists() {
         mapCmdCb_["listitem"] = &World::ListItems;
+        mapCmdCb_["showpersons"] = &World::ShowPersons;
     }
 public:
     World()
