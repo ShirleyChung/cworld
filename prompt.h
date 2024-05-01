@@ -1,3 +1,6 @@
+#ifndef _prompt_cmd_2024_
+#define _prompt_cmd_2024_
+
 #include <iostream>
 #include <string>
 #include <list>
@@ -66,3 +69,5 @@ public:
         }
     }
 };
+
+#endif

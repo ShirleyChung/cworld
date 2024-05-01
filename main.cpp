@@ -5,19 +5,11 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    // 解析 JSON 字符串
-    const char* json = "{\"hello\": \"world\",\"code\":100}";
-    rapidjson::Document document;
-    document.Parse(json);
+    Person person1;
+    person1.LoadFromStr("{\"name\": \"dummy\",\"inteligent\":1}");
+    cout << "person 1's name: " << person1.GetCharacter("name") << endl;
+    cout << "person 1's intl: " << person1.GetCharacter("inteligent") << endl;
 
-    // 讀取 JSON 屬性
-    if (document.HasMember("hello")) {
-        const rapidjson::Value& value = document["hello"];
-        if (value.IsString()) {
-            std::cout << "hello: " << value.GetString() << std::endl;
-            cout << "member: code = " << document["code"].GetInt() << endl;
- 	    }
-	}
     World w;
     Prompt pmt;
     pmt.RegisterCmdCallback(&w);

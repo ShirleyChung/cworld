@@ -2,3 +2,6 @@ build/*
 build/CMakeFiles/
 *.obj
 *.bin
+.vscode
+cworld
+.scons*

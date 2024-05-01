@@ -1,9 +1,7 @@
 #ifndef _cworld_Define_2024_
+#define _cworld_Define_2024_
 
-#include <map>
-#include <string>
-#include <sstream>
-#include <map>
+#include "person.h"
 #include "prompt.h"
 
 using namespace std;
