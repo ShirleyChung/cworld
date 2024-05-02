@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <map>
 #include "rapidjson/document.h"
 #include "prompt.h"
@@ -45,6 +46,25 @@ public:
     void AddCharacter(const std::string& key, const std::string& value) {
         Document::AllocatorType& allocator = characters_.GetAllocator();
         characters_.AddMember(Value(key.c_str(), allocator).Move(), Value(value.c_str(), allocator).Move(), characters_.GetAllocator());
+    }
+    // 設定一個特徵的值by string
+    void SetCharacter(const std::string& key, const std::string& value) {
+        if (characters_.HasMember(key.c_str())) {
+            rapidjson::Document::AllocatorType& allocator = characters_.GetAllocator();
+            characters_[key.c_str()].SetString(value.c_str(), allocator);
+        } else
+            AddCharacter(key, value);
+    }
+    // 設定一個特徵的值by int
+    void SetCharacter(const std::string& key, int value) {
+        if (characters_.HasMember(key.c_str())) {
+            rapidjson::Document::AllocatorType& allocator = characters_.GetAllocator();
+            characters_[key.c_str()].SetInt(value);
+        } else {
+            std::stringstream ss;
+            ss << value;
+            AddCharacter(key, ss.str());
+        }
     }
 };
 

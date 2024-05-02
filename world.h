@@ -3,10 +3,56 @@
 
 #include "person.h"
 #include "prompt.h"
-#include <fstream>
+#include <time.h>
 #include <thread>
+#include <chrono>
 
 using namespace std;
+
+// 管理一群JSON物件，可從JSON檔回復
+template<class T>
+class JSONObjManager {
+protected:
+    typedef std::map<std::string, T> OBJECTMAP;
+    OBJECTMAP objMap_;
+public:
+    JSONObjManager () {        
+    }
+    void LoadFromFile(const std::string& fn) {
+        cout << "-= Load from " << fn << "=- " << endl;
+        std::ifstream fs(fn.c_str());
+        if (fs) {
+            std::string line;
+            while (getline(fs, line)) {
+                T p(line);
+                objMap_[p.GetName()] = p;
+            }
+        }
+    }
+    void SaveToFile(const std::string& fn) {
+
+    }
+};
+
+// 管理所有人物
+class PersonManager: public JSONObjManager<Person> {
+    public:
+    PersonManager() {
+        LoadFromFile("data/person.data");
+    }
+    // 列出所有人物
+    void ListPersons() {
+        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+            cout << i->second.GetBrief() << endl;
+        }
+    }
+    // 所有人物時間流逝1秒
+    void PersonAging() {
+        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+            i->second.IncreaseAge(1);
+        }
+    }
+};
 
 struct Location
 {
@@ -27,40 +73,6 @@ struct Object
         return ss.str();
     }
 };
-
-template<class T>
-class JSONObjManager {
-protected:
-    typedef std::map<std::string, T> OBJECTMAP;
-    OBJECTMAP objMap_;
-public:
-    JSONObjManager () {        
-    }
-    void LoadFromFile(const std::string& fn) {
-        cout << "-= Load from " << fn << "=- " << endl;
-        std::ifstream fs(fn.c_str());
-        if (fs) {
-            std::string line;
-            while (getline(fs, line)) {
-                T p(line);
-                objMap_[p.GetName()] = p;
-            }
-        }
-    }
-};
-
-class PersonManager: public JSONObjManager<Person> {
-    public:
-    PersonManager() {
-        LoadFromFile("data/person.data");
-    }
-    void ListPersons() {
-        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-            cout << i->first << i->second.GetCharacter("brief") << endl;
-        }
-    }
-};
-
 
 class World : public Object, public CommandReciever
 {
@@ -93,23 +105,42 @@ class World : public Object, public CommandReciever
 
     void SetupCmdLists() {
         mapCmdCb_["listitem"] = &World::ListItems;
-        mapCmdCb_["showpersons"] = &World::ShowPersons;
+       mapCmdCb_["sp"] =  mapCmdCb_["showpersons"] = &World::ShowPersons;
     }
 
     thread timer_thread_;
+    bool running_;
 
+    // 每秒事件
+    void OnOneSecondPass() {
+        // 每個人物都過1秒
+        personMgr_.PersonAging();
+    }
+
+    // 時計執行緒
     void OnTimerThread() {
-        
+        time_t prevTime = time(NULL);
+        while (running_) {
+            time_t now = time(NULL);
+            if (now - prevTime >= 1) {
+                prevTime = now;
+                OnOneSecondPass();
+            }
+            
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 public:
     World()
     : timer_thread_(&World::OnTimerThread, this)
+    , running_(true)
     {
         SetupCmdLists();
         location_ = Location(0, 0);
         std::cout << "-= World Start =-" << endl;
     }
     ~World() {
+        running_ = false;
         timer_thread_.join();
     }
 
