@@ -4,6 +4,7 @@
 #include "person.h"
 #include "prompt.h"
 #include <fstream>
+#include <thread>
 
 using namespace std;
 
@@ -94,14 +95,23 @@ class World : public Object, public CommandReciever
         mapCmdCb_["listitem"] = &World::ListItems;
         mapCmdCb_["showpersons"] = &World::ShowPersons;
     }
+
+    thread timer_thread_;
+
+    void OnTimerThread() {
+        
+    }
 public:
     World()
+    : timer_thread_(&World::OnTimerThread, this)
     {
         SetupCmdLists();
         location_ = Location(0, 0);
         std::cout << "-= World Start =-" << endl;
     }
-    ~World() {}
+    ~World() {
+        timer_thread_.join();
+    }
 
     // 輸入字串，從字串中拆解出command及parameter, 並從mapCmdCb中找出對應的函式來呼叫
     virtual bool OnCommand(const std::string &line)
