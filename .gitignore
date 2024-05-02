@@ -5,3 +5,5 @@ build/CMakeFiles/
 .vscode
 cworld
 .scons*
+out
+build_scons
