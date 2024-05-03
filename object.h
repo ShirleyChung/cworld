@@ -59,7 +59,9 @@ public:
     void SetCharacter(const std::string& key, int value) {
         if (characters_.HasMember(key.c_str())) {
             rapidjson::Document::AllocatorType& allocator = characters_.GetAllocator();
-            characters_[key.c_str()].SetInt(value);
+            std::stringstream ss;
+            ss << value;
+            characters_[key.c_str()].SetString(ss.str().c_str(), allocator);
         } else {
             std::stringstream ss;
             ss << value;

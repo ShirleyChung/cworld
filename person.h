@@ -28,7 +28,7 @@ public:
     // 增加年紀
     void IncreaseAge(int timepass) {
         int age = atoi(GetCharacter("age").c_str());
-        SetCharacter("age", ++age);
+        SetCharacter("age", age + timepass);
     }
     // 取得簡述
     std::string GetBrief() {
