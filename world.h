@@ -9,103 +9,24 @@
 
 using namespace std;
 
-// 管理一群JSON物件，可從JSON檔回復
-template<class T>
-class JSONObjManager {
-protected:
-    typedef std::map<std::string, T> OBJECTMAP;
-    OBJECTMAP objMap_;
-public:
-    JSONObjManager () {        
-    }
-    void LoadFromFile(const std::string& fn) {
-        cout << "-= Load from " << fn << "=- " << endl;
-        std::ifstream fs(fn.c_str());
-        if (fs) {
-            std::string line;
-            while (getline(fs, line)) {
-                T p(line);
-                objMap_[p.GetName()] = p;
-            }
-        }
-    }
-    void SaveToFile(const std::string& fn) {
-
-    }
-};
-
-// 管理所有人物
-class PersonManager: public JSONObjManager<Person> {
-    public:
-    PersonManager() {
-        LoadFromFile("data/person.data");
-    }
-    // 列出所有人物
-    void ListPersons() {
-        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-            cout << i->second.GetBrief() << endl;
-        }
-    }
-    // 所有人物時間流逝1秒
-    void PersonAging() {
-        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-            i->second.IncreaseAge(1);
-        }
-    }
-};
-
-struct Location
+class World : public CommandReciever
 {
-    int x_;
-    int y_;
-    Location(int x = -1, int y = -1)
-    : x_(x)
-    , y_(y) {}
-};
-
-struct Object
-{
-    std::string desc_;
-    Location location_;
-    std::string ToString() {
-        std::stringstream ss;
-        ss << desc_ << " at (" << location_.x_ << ", " << location_.y_ << ")";
-        return ss.str();
-    }
-};
-
-class World : public Object, public CommandReciever
-{
-    PersonManager personMgr_;
-
-    typedef std::map<std::string, Object> OBJMAP;
-    OBJMAP mapObjects_;
-
     typedef const std::string (World::*CMD_CALLBACK)(const std::string& param);
 
     typedef std::map<std::string, CMD_CALLBACK> CMDCBK_MAP;
 
     CMDCBK_MAP mapCmdCb_;
 
+    PersonManager personMgr_;
+
+        // 列出所有人物
     const std::string ShowPersons(const std::string& params) {
         personMgr_.ListPersons();
         return "";
     }
 
-    const std::string ListItems(const std::string& params) {
-        std::cout << "listing item..." << std::endl;
-        if (!mapObjects_.size())
-            std::cout << "Empty" << std::endl;
-        else
-            for (OBJMAP::iterator i = mapObjects_.begin(); i != mapObjects_.end(); ++i) {
-                std::cout << i->first << ":" << i->second.ToString() << std::endl;
-            }
-        return "complete.";
-    }
-
     void SetupCmdLists() {
-        mapCmdCb_["listitem"] = &World::ListItems;
-       mapCmdCb_["sp"] =  mapCmdCb_["showpersons"] = &World::ShowPersons;
+        mapCmdCb_["sp"] =  mapCmdCb_["showpersons"] = &World::ShowPersons;
     }
 
     thread timer_thread_;
@@ -136,7 +57,6 @@ public:
     , running_(true)
     {
         SetupCmdLists();
-        location_ = Location(0, 0);
         std::cout << "-= World Start =-" << endl;
     }
     ~World() {

@@ -70,4 +70,29 @@ public:
     }
 };
 
+// 管理一群JSON物件，可從JSON檔回復
+template<class T>
+class JSONObjManager {
+protected:
+    typedef std::map<std::string, T> OBJECTMAP;
+    OBJECTMAP objMap_;
+public:
+    JSONObjManager () {        
+    }
+    void LoadFromFile(const std::string& fn) {
+        cout << "-= Load from " << fn << "=- " << endl;
+        std::ifstream fs(fn.c_str());
+        if (fs) {
+            std::string line;
+            while (getline(fs, line)) {
+                T p(line);
+                objMap_[p.GetName()] = p;
+            }
+        }
+    }
+    void SaveToFile(const std::string& fn) {
+
+    }
+};
+
 #endif

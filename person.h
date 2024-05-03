@@ -38,4 +38,29 @@ public:
     }
 };
 
+// 管理所有人物
+class PersonManager: public JSONObjManager<Person> {
+    public:
+    PersonManager() {
+        LoadFromFile("data/person.data");
+    }
+    // 列出所有人物
+    void ListPersons() {
+        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+            cout << i->second.GetBrief() << endl;
+        }
+    }
+    // 所有人物時間流逝1秒
+    void PersonAging() {
+        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+            i->second.IncreaseAge(1);
+        }
+    }
+    // 列出所有人物
+    const std::string ShowPersons(const std::string& params) {
+        ListPersons();
+        return "";
+    }
+};
+
 #endif
