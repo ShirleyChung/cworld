@@ -91,7 +91,16 @@ public:
         }
     }
     void SaveToFile(const std::string& fn) {
-
+        cout << "-= Person Save To " << fn << "=- " << endl;
+        std::ofstream fs(fn.c_str(), std::ofstream::out | std::ofstream::trunc);
+        if (fs) {
+            for (typename OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
+                fs << i->second.ToString() << endl;
+            }
+            fs.flush();
+            cout << "Save OK." << endl;
+        } else
+            cout << fn << " open fail" << endl;
     }
 };
 

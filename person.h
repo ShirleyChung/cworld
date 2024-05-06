@@ -6,9 +6,12 @@
 
 /* 定義一個人物的資料 */
 class Person: public JSONObj {
-
+    int age;
+    std::string name;
 public:
-    Person(const std::string& str = "") {
+    Person(const std::string& str = "")
+    : age(-1)
+    {
         if (str.empty()) {
             std::stringstream ss;
             ss << "{\"name\":\"person"<< rand() << "\"}";
@@ -23,12 +26,16 @@ public:
     }
     // 名字
     std::string GetName() {
-        return GetCharacter("name");
+        if (name.empty())
+            name = GetCharacter("name");
+        return name;
     }
     // 增加年紀
     void IncreaseAge(int timepass) {
-        int age = atoi(GetCharacter("age").c_str());
-        SetCharacter("age", age + timepass);
+        if (age < 0)
+            age = atoi(GetCharacter("age").c_str());
+        age += timepass;
+        SetCharacter("age", age);
     }
     // 取得簡述
     std::string GetBrief() {
@@ -39,10 +46,14 @@ public:
 };
 
 // 管理所有人物
+#define PERSON_DATA_FILE "data/person.data"
 class PersonManager: public JSONObjManager<Person> {
     public:
     PersonManager() {
-        LoadFromFile("data/person.data");
+        LoadFromFile(PERSON_DATA_FILE);
+    }
+    virtual ~PersonManager() {
+        SaveToFile(PERSON_DATA_FILE);
     }
     // 列出所有人物
     void ListPersons() {
@@ -55,11 +66,6 @@ class PersonManager: public JSONObjManager<Person> {
         for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
             i->second.IncreaseAge(1);
         }
-    }
-    // 列出所有人物
-    const std::string ShowPersons(const std::string& params) {
-        ListPersons();
-        return "";
     }
 };
 
