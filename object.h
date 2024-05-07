@@ -106,10 +106,13 @@ public:
     }
     // 搜尋陣列中，有成員key=value的元素
     T* GetIf(const std::string& key, const std::string& value) {
-        auto it = find_if(being(objMap_), end(objMap_), [key, value](T& i) {
+        auto it = FindIf(key, value);
+        return (it == end(objMap_))? NULL: &(*it);
+    }
+    typename OBJECTARRAY::iterator FindIf(const std::string& key, const std::string& value) {
+        return find_if(begin(objMap_), end(objMap_), [key, value](T& i) {
             return i.GetCharacter(key) == value;
         });
-        return (it == end(objMap_))? NULL: &(*it);
     }
 };
 

@@ -54,7 +54,7 @@ public:
     // 取得簡述
     std::string GetBrief() {
         std::stringstream ss;
-        ss << "[名字]:" << GetCharacter("name") <<", " << "[年紀]：" << GetCharacter("age") << ", " << GetCharacter("brief");
+        ss << "[名字]:" << GetCharacter("name") <<", " << "\t\t[年紀]：" << GetCharacter("age") << " (sec), \t\t[簡介]:" << GetCharacter("brief");
         return ss.str();
     }
 };
@@ -86,6 +86,28 @@ class PersonManager: public JSONObjManager<Person> {
         cout << "Creating " << name << "..." << endl;
         objMap_.push_back(Person("name", name));
         return objMap_.back();
+    }
+    // 修改Person的屬性
+    void EditPerson(const std::string name, const std::string&key, const std::string& value) {
+        if (!key.empty()) {
+            if (Person* p = GetIf("name", name)) {
+                p->SetCharacter(key, value);
+            } else {
+                Person& np = CreatePerson(name);
+                np.SetCharacter(key, value);
+            }
+        } else
+            cout << "Please specify key. For example, edp person_name name new_name" << endl;
+    }
+    // 刪除一個Person
+    bool DeletePerson(const std::string name) {
+        OBJECTARRAY::iterator i = FindIf("name", name);
+        if (i != end(objMap_)) {
+            objMap_.erase(i);
+            return true;
+        }
+        cout << name << " not found." << endl;
+        return false;
     }
 };
 
