@@ -6,6 +6,7 @@
 #include <time.h>
 #include <thread>
 #include <chrono>
+#include <set>
 
 using namespace std;
 
@@ -26,10 +27,22 @@ class World : public CommandReciever
 {
     typedef const std::string (World::*CMD_CALLBACK)(const std::string& param);
 
-    typedef std::map<std::string, CMD_CALLBACK> CMDCBK_MAP;
+    struct CMD_INFO {
+        CMD_CALLBACK cmdCb_;
+        std::string  cmd_;
+        std::string  desc_;
+        std::string  alias_;
 
-    CMDCBK_MAP mapCmdCb_;
-    CMDCBK_MAP cmdAlias_;
+        bool operator<(const CMD_INFO& rhs) const {
+            return cmd_ < rhs.cmd_;
+        }
+        bool operator==(const CMD_INFO& rhs) const {
+            return cmd_ == rhs.cmd_ && cmdCb_ == rhs.cmdCb_;
+        }
+    };
+
+    typedef std::set<CMD_INFO> CMD_SET;
+    CMD_SET cmdSet_;
 
     PersonManager personMgr_;
 
@@ -69,17 +82,20 @@ class World : public CommandReciever
     }
 
     const std::string ListCommand(const std::string& params) {
-        for (CMDCBK_MAP::iterator i = mapCmdCb_.begin(); i != mapCmdCb_.end(); ++i) {
-            cout << i->first << endl;
+        cout << "list all commands:" << endl;
+        for (CMD_SET::iterator i = cmdSet_.begin(); i != cmdSet_.end(); ++i) {
+            cout << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_ << endl;
         }
+        cout << "--\nexit, quit to quit\n" << endl;
         return "";
     }
 
     void SetupCmdLists() {
-        cmdAlias_["sp"]  =  mapCmdCb_["showpersons"] = &World::ShowPersons;
-        cmdAlias_["crp"] =  mapCmdCb_["createperson"] = &World::CreatePerson;
-        cmdAlias_["edp"] =  mapCmdCb_["editperson"] = &World::EditPerson;
-        cmdAlias_["rmp"] =  mapCmdCb_["deleteperson"] = &World::DeletePerson;
+        cmdSet_.insert(CMD_INFO{&World::ShowPersons, "showperons", "show all persons", "sp"});
+        cmdSet_.insert(CMD_INFO{&World::CreatePerson, "createperson", "create a person", "crp"});
+        cmdSet_.insert(CMD_INFO{&World::EditPerson, "editperson", "edit a property of a person", "edp"});
+        cmdSet_.insert(CMD_INFO{&World::DeletePerson, "deleteperson", "delete a person", "rmp"});
+        cmdSet_.insert(CMD_INFO{&World::ListCommand, "listcommand", "list all commands", "ll"});
     }
 
     thread timer_thread_;
@@ -124,11 +140,14 @@ public:
         std::string cmd   = GetContent(str, ' ');
         std::string param = str;
         std::string result;
-        CMDCBK_MAP::iterator i = mapCmdCb_.find(cmd);
-        if (i == mapCmdCb_.end())
-            i = cmdAlias_.find(cmd);
-        if (i != mapCmdCb_.end() || i != cmdAlias_.end()) {
-            result = (this->*i->second)(param);
+
+        // 比對指令
+        CMD_SET::iterator i = find_if(begin(cmdSet_), end(cmdSet_), [cmd](const CMD_INFO& info) {
+            return cmd == info.cmd_ || cmd == info.alias_;
+        });
+        // 執行指令
+        if (i != end(cmdSet_)) {
+            result = (this->*i->cmdCb_)(param);
             return true;
         }
         return false;
