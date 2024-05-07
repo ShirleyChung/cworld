@@ -70,6 +70,13 @@ public:
             AddCharacter(key, ss.str());
         }
     }
+    // 刪掉一個特徵
+    void DeleteCharacter(const std::string& key) {
+        if (characters_.HasMember(key.c_str())) {
+            characters_.RemoveMember(key.c_str());
+        } else
+            cout << "no member named: " << key << endl;
+    }
 };
 
 // 管理一群JSON物件，可從JSON檔回復

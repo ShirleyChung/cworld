@@ -46,9 +46,13 @@ class World : public CommandReciever
 
     PersonManager personMgr_;
 
-    // 列出所有人物
+    // 列出人物, 若參數為空白則列出所有
     const std::string ShowPersons(const std::string& params) {
-        personMgr_.ListPersons();
+        std::string str = params;
+        do {
+            std::string name = GetContent(str, ' ');
+            personMgr_.ListPersons(name);
+        } while (!str.empty());
         return "";
     }
     // 建立一個人物
@@ -80,22 +84,32 @@ class World : public CommandReciever
         personMgr_.DeletePerson(name);
         return "";
     }
+    // 刪掉一個人物的特徵
+    const std::string DeletePersonCharacter(const std::string& params) {
+        std::string str = params;
+        std::string name = GetContent(str, ' ');
+        do {
+            std::string key = GetContent(str, ' ');
+            personMgr_.DeletePersonCharacter(name, key);
+        } while(!str.empty());
+        return "";
+    }
 
     const std::string ListCommand(const std::string& params) {
-        cout << "list all commands:" << endl;
+        cout << "\nList All Commands:" << endl;
         for (CMD_SET::iterator i = cmdSet_.begin(); i != cmdSet_.end(); ++i) {
             cout << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_ << endl;
         }
-        cout << "--\nexit, quit to quit\n" << endl;
+        cout << "--\nexit, quit to Quit\n" << endl;
         return "";
     }
 
     void SetupCmdLists() {
-        cmdSet_.insert(CMD_INFO{&World::ShowPersons, "showperons", "show all persons", "sp"});
-        cmdSet_.insert(CMD_INFO{&World::CreatePerson, "createperson", "create a person", "crp"});
-        cmdSet_.insert(CMD_INFO{&World::EditPerson, "editperson", "edit a property of a person", "edp"});
-        cmdSet_.insert(CMD_INFO{&World::DeletePerson, "deleteperson", "delete a person", "rmp"});
-        cmdSet_.insert(CMD_INFO{&World::ListCommand, "listcommand", "list all commands", "ll"});
+        cmdSet_.insert(CMD_INFO{&World::ShowPersons, "showperons", "show persons or person's detail.", "sp"});
+        cmdSet_.insert(CMD_INFO{&World::CreatePerson, "createperson", "create a person.", "crp"});
+        cmdSet_.insert(CMD_INFO{&World::EditPerson, "editperson", "edit a property of a person.", "edp"});
+        cmdSet_.insert(CMD_INFO{&World::DeletePerson, "deleteperson", "delete a person.", "rmp"});
+        cmdSet_.insert(CMD_INFO{&World::ListCommand, "listcommand", "list all commands.", "ll"});
     }
 
     thread timer_thread_;
