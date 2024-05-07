@@ -62,7 +62,7 @@ public:
     void run() {
         while(loopWork_) {
             std::cout << prompt_ << " > ";
-            std::cin >> cmd_;
+            std::getline(std::cin, cmd_);
             if (QuitCommand(cmd_))
                 break;
             ExecuteCommand(cmd_);

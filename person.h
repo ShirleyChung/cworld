@@ -9,6 +9,7 @@ class Person: public JSONObj {
     int age;
     std::string name;
 public:
+    // 以JSON建立一個Person
     Person(const std::string& str = "")
     : age(-1)
     {
@@ -19,7 +20,20 @@ public:
         } else
             LoadFromStr(str.c_str());
     }
+    // 建立一個Person, 並指定某個特徵
+    Person(const std::string& key, const std::string& value) 
+    : age(-1)
+    {
+        characters_.SetObject();
+        AddCharacter(key, value);
+    }
+    // Copy constructor. C++11已明確定義=delete, 因有自定義的Constructor, 因此需要明確實作以便後續的複製操作.
+    Person(const Person& rhs) {
+        (*this) = rhs;
+    }
     Person& operator=(const Person& rhs) {
+        this->age = rhs.age;
+        this->name = rhs.name;
         characters_.SetObject();
         characters_.CopyFrom(rhs.characters_, characters_.GetAllocator());
         return *this;
@@ -57,15 +71,21 @@ class PersonManager: public JSONObjManager<Person> {
     }
     // 列出所有人物
     void ListPersons() {
-        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-            cout << i->second.GetBrief() << endl;
+        for (Person& p : objMap_) {
+            cout << p.GetBrief() << endl;
         }
     }
     // 所有人物時間流逝1秒
     void PersonAging() {
-        for (OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-            i->second.IncreaseAge(1);
+        for (Person& p : objMap_) {
+            p.IncreaseAge(1);
         }
+    }
+    // 建立一個Person
+    Person& CreatePerson(const std::string name) {
+        cout << "Creating " << name << "..." << endl;
+        objMap_.push_back(Person("name", name));
+        return objMap_.back();
     }
 };
 

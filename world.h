@@ -24,9 +24,15 @@ class World : public CommandReciever
         personMgr_.ListPersons();
         return "";
     }
+    const std::string CreatePerson(const std::string& name) {
+        personMgr_.CreatePerson(name);
+        return "";
+    }
+
 
     void SetupCmdLists() {
         mapCmdCb_["sp"] =  mapCmdCb_["showpersons"] = &World::ShowPersons;
+        mapCmdCb_["crp"] =  mapCmdCb_["createperson"] = &World::CreatePerson;
     }
 
     thread timer_thread_;

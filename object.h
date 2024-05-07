@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <vector>
+#include <algorithm>
 #include "rapidjson/document.h"
 #include "prompt.h"
 
@@ -74,8 +76,8 @@ public:
 template<class T>
 class JSONObjManager {
 protected:
-    typedef std::map<std::string, T> OBJECTMAP;
-    OBJECTMAP objMap_;
+    typedef std::vector<T> OBJECTARRAY;
+    OBJECTARRAY objMap_;
 public:
     JSONObjManager () {        
     }
@@ -86,7 +88,7 @@ public:
             std::string line;
             while (getline(fs, line)) {
                 T p(line);
-                objMap_[p.GetName()] = p;
+                objMap_.push_back(p);
             }
         }
     }
@@ -94,13 +96,20 @@ public:
         cout << "-= Person Save To " << fn << "=- " << endl;
         std::ofstream fs(fn.c_str(), std::ofstream::out | std::ofstream::trunc);
         if (fs) {
-            for (typename OBJECTMAP::iterator i = objMap_.begin(); i != objMap_.end(); ++i) {
-                fs << i->second.ToString() << endl;
+            for (T& i : objMap_) {
+                fs << i.ToString() << endl;
             }
             fs.flush();
             cout << "Save OK." << endl;
         } else
             cout << fn << " open fail" << endl;
+    }
+    // 搜尋陣列中，有成員key=value的元素
+    T* GetIf(const std::string& key, const std::string& value) {
+        auto it = find_if(being(objMap_), end(objMap_), [key, value](T& i) {
+            return i.GetCharacter(key) == value;
+        });
+        return (it == end(objMap_))? NULL: &(*it);
     }
 };
 
