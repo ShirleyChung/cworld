@@ -1,50 +1,18 @@
 #ifndef _cworld_Define_2024_
 #define _cworld_Define_2024_
 
-#include "person.h"
-#include "prompt.h"
 #include <time.h>
 #include <thread>
 #include <chrono>
-#include <set>
+#include "prompt.h"
+#include "action.h"
 
 using namespace std;
 
-// 取得Token
-const std::string GetContent(std::string& str, const char endChar) {
-    const std::string::size_type begin_pos = str.find(endChar);
-    if (begin_pos != std::string::npos) {
-        const std::string substr = str.substr(0, begin_pos);
-        str = str.substr(begin_pos + sizeof(endChar));
-        return substr;
-    }
-    const std::string substr = str;
-    str = std::string();
-    return substr;
-}
-
-class World : public CommandReciever
+class World : public CommandReciever<World>, public Commandable
 {
-    typedef const std::string (World::*CMD_CALLBACK)(const std::string& param);
-
-    struct CMD_INFO {
-        CMD_CALLBACK cmdCb_;
-        std::string  cmd_;
-        std::string  desc_;
-        std::string  alias_;
-
-        bool operator<(const CMD_INFO& rhs) const {
-            return cmd_ < rhs.cmd_;
-        }
-        bool operator==(const CMD_INFO& rhs) const {
-            return cmd_ == rhs.cmd_ && cmdCb_ == rhs.cmdCb_;
-        }
-    };
-
-    typedef std::set<CMD_INFO> CMD_SET;
-    CMD_SET cmdSet_;
-
     PersonManager personMgr_;
+    ActionManager actionMgr_;
 
     // 列出人物, 若參數為空白則列出所有
     const std::string ShowPersons(const std::string& params) {
@@ -138,6 +106,7 @@ public:
     World()
     : timer_thread_(&World::OnTimerThread, this)
     , running_(true)
+    , actionMgr_(personMgr_)
     {
         SetupCmdLists();
         std::cout << "-= World Start =-" << endl;
@@ -147,7 +116,7 @@ public:
         timer_thread_.join();
     }
 
-    // 輸入字串，從字串中拆解出command及parameter, 並從mapCmdCb中找出對應的函式來呼叫
+   // 輸入字串，從字串中拆解出command及parameter, 並從mapCmdCb中找出對應的函式來呼叫
     virtual bool OnCommand(const std::string &line)
     {
         std::string str = line;
