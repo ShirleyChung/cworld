@@ -25,7 +25,7 @@ const std::string GetContent(std::string& str, const char endChar) {
 }
 
 template<typename T>
-struct CommandReciever {
+struct CommandFunctionSet {
 
     typedef const std::string (T::*CMD_CALLBACK)(const std::string& param);
 

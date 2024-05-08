@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class World : public CommandReciever<World>, public Commandable
+class World : public CommandFunctionSet<World>, public Commandable
 {
     PersonManager personMgr_;
     ActionManager actionMgr_;
