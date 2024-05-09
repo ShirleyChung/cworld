@@ -3,11 +3,49 @@
 
 #include "person.h"
 #include "prompt.h"
+#include <time.h>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
 struct Action {
+    std::thread action_thread_;
+    virtual void OnActing() {}
+    Action()
+    : action_thread_(&Action::OnActing, this)
+    {}
+};
 
+struct Fighting: Action {
+    Person &person1_, &person2_;
+    Fighting(Person& p1, Person& p2) 
+    : person1_(p1)
+    , person2_(p2)
+    {}
+    virtual void OnActing() {
+        person1_.stamina_ = 100;
+        person2_.stamina_ = 100;
+        cout << person1_.GetName() << " stamina:" << person1_.stamina_ << endl;
+        cout << person2_.GetName() << " stamina:" << person2_.stamina_ << endl;
+        int count = 10;
+        while (person1_.stamina_ > 0 && person2_.stamina_ > 0 && count-- < 0) {
+            person1_.Beat(person2_);
+            srand((unsigned)time(NULL));
+            int rest_time = 1 + int((2.0f*(float)rand() / (float)RAND_MAX));
+            std::this_thread::sleep_for(std::chrono::milliseconds(rest_time * 1000));
+            person2_.Beat(person1_);
+            rest_time = 1 + int((2.0f*(float)rand() / (float)RAND_MAX));
+            std::this_thread::sleep_for(std::chrono::milliseconds(rest_time * 1000));
+        }
+        if (person1_.stamina_ > person2_.stamina_)
+            cout << person1_.GetName() << " win!" << endl;
+        else if ((person1_.stamina_ < person2_.stamina_))
+            cout << person2_.GetName() << " win!" << endl;
+        else
+            cout << "draw!" << endl;
+        delete this;
+    }
 };
 
 class ActionManager: public CommandFunctionSet<ActionManager> {
@@ -19,6 +57,7 @@ class ActionManager: public CommandFunctionSet<ActionManager> {
         if (Person* p1 = personMgr_.GetIf("name", person1)) {
             if (Person* p2 = personMgr_.GetIf("name", person2)) {
                 cout << person1 << " attacking " << person2 << endl;
+                new Fighting(*p1, *p2);
             } else
                 cout << person2 << " not found" << endl;
         } else

@@ -1,7 +1,7 @@
-{"name":"Adam","brief":"first man","inteligent":1,"life":-1,"age":"4116"}
-{"name":"Sodier","age":"4116","brief":"a normal sodier"}
-{"name":"Alice","age":"3894","brief":"she is a flower keeper.","magic":"955"}
-{"name":"John","age":"3815","brief":"a beliver, who lives in Christ."}
-{"name":"Joshua","brief":"warriro_savior","age":"19236643","magic":"120","charm":"95"}
-{"name":"上杉謙信","brief":"東北大名","politic":"98","charm":"94","magic":"50","age":"2440"}
-{"name":"井伊直虎","charm":"80","brief":"遠江國國眾井伊氏的當家","fight":"75","politic":"69","age":"684"}
+{"name":"Adam","brief":"first man","inteligent":1,"life":-1,"age":"4139","strength":"50","skill":"50","speed":"50"}
+{"name":"Sodier","age":"4139","brief":"a normal sodier","strength":"50","skill":"50","speed":"50"}
+{"name":"Alice","age":"3917","brief":"she is a flower keeper.","magic":"955"}
+{"name":"John","age":"3838","brief":"a beliver, who lives in Christ."}
+{"name":"Joshua","brief":"warriro_savior","age":"19236666","magic":"120","charm":"95"}
+{"name":"上杉謙信","brief":"東北大名","politic":"98","charm":"94","magic":"50","age":"2463"}
+{"name":"井伊直虎","charm":"80","brief":"遠江國國眾井伊氏的當家","fight":"75","politic":"69","age":"707"}

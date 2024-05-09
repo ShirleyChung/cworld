@@ -52,6 +52,7 @@ public:
     // 建立一個Person, 並指定某個特徵
     Person(const std::string& key, const std::string& value) 
     : age(-1)
+    , stamina_(100)
     {
         characters_.SetObject();
         AddCharacter(key, value);
@@ -89,6 +90,24 @@ public:
     // 列出所有屬性
     void ShowCharacters() {
         cout << _ShowCharacter(characters_) << endl;
+    }
+    int stamina_;
+    // 計算統合輸出
+    int GiveForce() {
+        float strengh = atof(GetCharacter("strength", "50").c_str()) * 0.5f;
+        float skill   = atof(GetCharacter("skill", "50").c_str()) * 0.3f; 
+        float speed   = atof(GetCharacter("speed", "50").c_str()) * 0.2f; 
+        srand((unsigned)time(NULL));
+        float locky = (80.0f + 20.0f * ((float)rand() / (float)RAND_MAX)) / 100.0f;
+        return int((strengh + skill + speed) * locky);
+    }
+
+    // 攻擊對手
+    void Beat(Person& enemy) {
+        // 雙方的統合輸出的差值, 給予方不能小於接受方
+        int damage = max(0, GiveForce() - enemy.GiveForce());
+        enemy.stamina_ -= damage;
+        cout << GetName() << " 攻擊了 " << enemy.GetName() << ",  迼成 " << damage << "點傷害." << endl;
     }
 };
 

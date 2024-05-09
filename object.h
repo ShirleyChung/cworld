@@ -44,6 +44,16 @@ public:
             return "";
         } 	    
     }
+    // 取得一個特徵, 若沒有則以預設值新增
+    const std::string GetCharacter(const std::string& key, const std::string& defVal) {
+        if (characters_.HasMember(key.c_str())) {
+            const rapidjson::Value& value = characters_[key.c_str()];
+            return value.IsString()? value.GetString(): "";
+        } else {
+            AddCharacter(key, defVal);
+            return defVal;
+        } 	    
+    }
     // 加入一個特徵
     void AddCharacter(const std::string& key, const std::string& value) {
         Document::AllocatorType& allocator = characters_.GetAllocator();

@@ -1,9 +1,6 @@
 #ifndef _cworld_Define_2024_
 #define _cworld_Define_2024_
 
-#include <time.h>
-#include <thread>
-#include <chrono>
 #include "action.h"
 
 using namespace std;
