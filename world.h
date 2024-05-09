@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class World : public CommandFunctionSet<World>, public Commandable
+class World : public CommandFunctionSet<World>
 {
     PersonManager personMgr_;
     ActionManager actionMgr_;
@@ -114,26 +114,6 @@ public:
     ~World() {
         running_ = false;
         timer_thread_.join();
-    }
-
-   // 輸入字串，從字串中拆解出command及parameter, 並從mapCmdCb中找出對應的函式來呼叫
-    virtual bool OnCommand(const std::string &line)
-    {
-        std::string str = line;
-        std::string cmd   = GetContent(str, ' ');
-        std::string param = str;
-        std::string result;
-
-        // 比對指令
-        CMD_SET::iterator i = find_if(begin(cmdSet_), end(cmdSet_), [cmd](const CMD_INFO& info) {
-            return cmd == info.cmd_ || cmd == info.alias_;
-        });
-        // 執行指令
-        if (i != end(cmdSet_)) {
-            result = (this->*i->cmdCb_)(param);
-            return true;
-        }
-        return false;
     }
 };
 

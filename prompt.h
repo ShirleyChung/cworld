@@ -2,30 +2,18 @@
 #define _prompt_cmd_2024_
 
 #include <iostream>
-#include <string>
 #include <list>
 #include <set>
+#include "utility.h"
 
-// Command callback interface
+// 可讓Promprt指令列註冊呼叫的介面
 struct Commandable {
     virtual bool OnCommand(const std::string& cmd) = 0;
 };
 
-// 取得Token
-const std::string GetContent(std::string& str, const char endChar) {
-    const std::string::size_type begin_pos = str.find(endChar);
-    if (begin_pos != std::string::npos) {
-        const std::string substr = str.substr(0, begin_pos);
-        str = str.substr(begin_pos + sizeof(endChar));
-        return substr;
-    }
-    const std::string substr = str;
-    str = std::string();
-    return substr;
-}
-
+// 指令對應函式的類別. 子類別可以實作指令函式，讓指令介面呼叫
 template<typename T>
-struct CommandFunctionSet {
+struct CommandFunctionSet: Commandable {
 
     typedef const std::string (T::*CMD_CALLBACK)(const std::string& param);
 
@@ -45,6 +33,26 @@ struct CommandFunctionSet {
 
     typedef std::set<CMD_INFO> CMD_SET;
     CMD_SET cmdSet_;
+
+       // 輸入字串，從字串中拆解出command及parameter, 並從mapCmdCb中找出對應的函式來呼叫
+    virtual bool OnCommand(const std::string &line)
+    {
+        std::string str = line;
+        std::string cmd   = GetContent(str, ' ');
+        std::string param = str;
+        std::string result;
+
+        // 比對指令
+        typename CMD_SET::iterator i = find_if(begin(cmdSet_), end(cmdSet_), [cmd](const CMD_INFO& info) {
+            return cmd == info.cmd_ || cmd == info.alias_;
+        });
+        // 執行指令
+        if (i != end(cmdSet_)) {
+            result = (((T*)this)->*i->cmdCb_)(param);
+            return true;
+        }
+        return false;
+    }
 };
 
 // Prompt and Input Command to execute

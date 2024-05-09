@@ -16,7 +16,13 @@ class ActionManager: public CommandFunctionSet<ActionManager> {
         std::string str;
         std::string person1 = GetContent(str, ' ');
         std::string person2 = GetContent(str, ' ');
-        cout << person1 << " attacking " << person2 << endl;
+        if (Person* p1 = personMgr_.GetIf("name", person1)) {
+            if (Person* p2 = personMgr_.GetIf("name", person2)) {
+                cout << person1 << " attacking " << person2 << endl;
+            } else
+                cout << person2 << " not found" << endl;
+        } else
+            cout << person1 << " not found" << endl;
         return "";
     }
 
