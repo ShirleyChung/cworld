@@ -3,6 +3,7 @@
 
 #include <map>
 #include "object.h"
+#include "prompt.h"
 
 /* 定義一個人物的資料 */
 class Person: public JSONObj {
@@ -93,51 +94,27 @@ public:
 
 // 管理所有人物
 #define PERSON_DATA_FILE "data/person.data"
-class PersonManager: public JSONObjManager<Person> {
-    public:
-    PersonManager() {
-        LoadFromFile(PERSON_DATA_FILE);
-    }
-    virtual ~PersonManager() {
-        SaveToFile(PERSON_DATA_FILE);
-    }
-    // 列出所有人物
-    void ListPersons(const std::string& name = "") {
-        Person* p = GetIf("name", name);
-        if (!name.empty() && p) {
-            p->ShowCharacters();
-        } else {
-            for (Person& p : objMap_) {
-                cout << p.GetBrief() << endl;
-            }
-        }            
-    }
-    // 所有人物時間流逝1秒
-    void PersonAging() {
-        for (Person& p : objMap_) {
-            p.IncreaseAge(1);
-        }
-    }
+class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<PersonManager> {
     // 建立一個Person
-    Person& CreatePerson(const std::string name) {
+    Person& _CreatePerson(const std::string& name) {
         cout << "Creating " << name << "..." << endl;
         objMap_.push_back(Person("name", name));
         return objMap_.back();
     }
     // 修改Person的屬性
-    void EditPerson(const std::string name, const std::string&key, const std::string& value) {
+    void EditPerson(const std::string& name, const std::string&key, const std::string& value) {
         if (!key.empty()) {
             if (Person* p = GetIf("name", name)) {
                 p->SetCharacter(key, value);
             } else {
-                Person& np = CreatePerson(name);
+                Person& np = _CreatePerson(name);
                 np.SetCharacter(key, value);
             }
         } else
             cout << "Please specify key. For example, edp person_name name new_name" << endl;
     }
     // 刪除Person的屬性
-    void DeletePersonCharacter(const std::string name, const std::string&key) {
+    void DeletePersonCharacter(const std::string& name, const std::string&key) {
         if (!key.empty()) {
             if (Person* p = GetIf("name", name)) {
                 p->DeleteCharacter(key);
@@ -145,16 +122,102 @@ class PersonManager: public JSONObjManager<Person> {
         } else
             cout << "Please specify key. For example, rmc person_name character" << endl;
     }
+
+    // 列出人物, 若參數為空白則列出所有
+    const std::string ShowPersons(const std::string& params) {
+        std::string str = params;
+        do {
+            std::string name = GetContent(str, ' ');
+            Person* p = GetIf("name", name);
+            if (!name.empty() && p) {
+                p->ShowCharacters();
+            } else {
+                for (Person& p : objMap_) {
+                    cout << p.GetBrief() << endl;
+                }
+            } 
+        } while (!str.empty());
+        return "";
+    }
+    // 建立一個人物
+    const std::string CreatePerson(const std::string& params) {
+        if (params.empty()) {
+            cout << "Please input 'Person_name prop_key1 prop_val1 prop_key2 prop_val2 ...'" << endl;
+            return "";
+        }
+        std::string str = params;
+        std::string name = GetContent(str, ' ');
+        do {
+            std::string key = GetContent(str, ' ');
+            std::string value = GetContent(str, ' ');
+            EditPerson(name, key, value);
+        } while(!str.empty());
+        return "";
+    }
+    // 編輯一個人物的屬性
+    const std::string EditPerson(const std::string& params) {
+        std::string str = params;
+        std::string name = GetContent(str, ' ');
+        std::string key = GetContent(str, ' ');
+        std::string value = str;
+        EditPerson(name, key, value);
+        return "";
+    }
+    // 刪掉一個人物的特徵
+    const std::string DeletePersonCharacter(const std::string& params) {
+        std::string str = params;
+        std::string name = GetContent(str, ' ');
+        do {
+            std::string key = GetContent(str, ' ');
+            DeletePersonCharacter(name, key);
+        } while(!str.empty());
+        return "";
+    }
+
+    const std::string ListCommand(const std::string& params) {
+        cout << "\nList All Commands:" << endl;
+        for (CMD_SET::iterator i = cmdSet_.begin(); i != cmdSet_.end(); ++i) {
+            cout << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_ << endl;
+        }
+        cout << "--\nexit, quit to Quit\n" << endl;
+        return "";
+    }
+
     // 刪除一個Person
-    bool DeletePerson(const std::string name) {
+    const std::string DeletePerson(const std::string& name) {
         OBJECTARRAY::iterator i = FindIf("name", name);
         if (i != end(objMap_)) {
             objMap_.erase(i);
-            return true;
+            return "";
         }
         cout << name << " not found." << endl;
-        return false;
+        return "";
     }
+
+    void SetupCmdLists() {
+        cmdSet_.insert(CMD_INFO{&PersonManager::ShowPersons, "showperons", "show persons or person's detail.", "sp"});
+        cmdSet_.insert(CMD_INFO{&PersonManager::CreatePerson, "createperson", "create a person.", "crp"});
+        cmdSet_.insert(CMD_INFO{&PersonManager::EditPerson, "editperson", "edit a property of a person.", "edp"});
+        cmdSet_.insert(CMD_INFO{&PersonManager::DeletePerson, "deleteperson", "delete a person.", "rmp"});
+        cmdSet_.insert(CMD_INFO{&PersonManager::ListCommand, "listcommand", "list all commands.", "ll"});
+    }
+
+public:
+    PersonManager() {
+        LoadFromFile(PERSON_DATA_FILE);
+        SetupCmdLists();
+    }
+    virtual ~PersonManager() {
+        SaveToFile(PERSON_DATA_FILE);
+    }
+
+    // 所有人物時間流逝1秒
+    void PersonAging() {
+        for (Person& p : objMap_) {
+            p.IncreaseAge(1);
+        }
+    }
+
 };
 
 #endif

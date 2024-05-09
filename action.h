@@ -13,7 +13,7 @@ struct Action {
 class ActionManager: public CommandFunctionSet<ActionManager> {
 
     const std::string Attack(const std::string& params) {
-        std::string str;
+        std::string str = params;
         std::string person1 = GetContent(str, ' ');
         std::string person2 = GetContent(str, ' ');
         if (Person* p1 = personMgr_.GetIf("name", person1)) {
