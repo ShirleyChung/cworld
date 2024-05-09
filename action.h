@@ -6,6 +6,7 @@
 #include <time.h>
 #include <thread>
 #include <chrono>
+#include <memory>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ struct Fighting: Action {
         cout << person1_.GetName() << " stamina:" << person1_.stamina_ << endl;
         cout << person2_.GetName() << " stamina:" << person2_.stamina_ << endl;
         int count = 10;
-        while (person1_.stamina_ > 0 && person2_.stamina_ > 0 && count-- < 0) {
+        while (person1_.stamina_ > 0 && person2_.stamina_ > 0 && count-- > 0) {
             person1_.Beat(person2_);
             srand((unsigned)time(NULL));
             int rest_time = 1 + int((2.0f*(float)rand() / (float)RAND_MAX));
@@ -44,11 +45,13 @@ struct Fighting: Action {
             cout << person2_.GetName() << " win!" << endl;
         else
             cout << "draw!" << endl;
-        delete this;
     }
 };
 
 class ActionManager: public CommandFunctionSet<ActionManager> {
+
+    typedef std::list<Action*> ACTION_LIST;
+    ACTION_LIST act_list_;
 
     const std::string Attack(const std::string& params) {
         std::string str = params;
@@ -57,7 +60,7 @@ class ActionManager: public CommandFunctionSet<ActionManager> {
         if (Person* p1 = personMgr_.GetIf("name", person1)) {
             if (Person* p2 = personMgr_.GetIf("name", person2)) {
                 cout << person1 << " attacking " << person2 << endl;
-                new Fighting(*p1, *p2);
+                act_list_.push_back(new Fighting(*p1, *p2));
             } else
                 cout << person2 << " not found" << endl;
         } else

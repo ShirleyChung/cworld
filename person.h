@@ -97,9 +97,9 @@ public:
         float strengh = atof(GetCharacter("strength", "50").c_str()) * 0.5f;
         float skill   = atof(GetCharacter("skill", "50").c_str()) * 0.3f; 
         float speed   = atof(GetCharacter("speed", "50").c_str()) * 0.2f; 
-        srand((unsigned)time(NULL));
         float locky = (80.0f + 20.0f * ((float)rand() / (float)RAND_MAX)) / 100.0f;
-        return int((strengh + skill + speed) * locky);
+        int force = int((strengh + skill + speed) * locky);
+        return force;
     }
 
     // 攻擊對手
@@ -107,7 +107,7 @@ public:
         // 雙方的統合輸出的差值, 給予方不能小於接受方
         int damage = max(0, GiveForce() - enemy.GiveForce());
         enemy.stamina_ -= damage;
-        cout << GetName() << " 攻擊了 " << enemy.GetName() << ",  迼成 " << damage << "點傷害." << endl;
+        cout << GetName() << " 攻擊了 " << enemy.GetName() << ",  迼成 " << damage << " 點傷害." << endl;
     }
 };
 
