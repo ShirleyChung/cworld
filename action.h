@@ -10,20 +10,45 @@
 
 using namespace std;
 
+// 一個動作
 struct Action {
     std::thread action_thread_;
     virtual void OnActing() {}
     Action()
     : action_thread_(&Action::OnActing, this)
     {}
+    // 隨機暫停atLeast~atMost
+    void SleepRandom(unsigned int atLeast, unsigned int atMost) {
+        int rest_time = atLeast + int((float(atMost - atLeast)*(float)rand() / (float)RAND_MAX));
+        std::this_thread::sleep_for(std::chrono::milliseconds(rest_time));
+    }
 };
 
+// 人物之間攻擊
 struct Fighting: Action {
     Person &person1_, &person2_;
     Fighting(Person& p1, Person& p2) 
     : person1_(p1)
     , person2_(p2)
     {}
+    
+    // 計算統合輸出
+    int CalculateForce(Person& p) {
+        float strengh = p.GetCharacter("strength", 50.0f) * 0.5f;
+        float skill   = p.GetCharacter("skill", 50.0f) * 0.3f; 
+        float speed   = p.GetCharacter("speed", 50.0f) * 0.2f; 
+        float locky = (80.0f + 20.0f * ((float)rand() / (float)RAND_MAX)) / 100.0f;
+        int force = int((strengh + skill + speed) * locky);
+        return force;
+    }
+
+    // 攻擊對手
+    void Beat(Person& offender, Person& defender) {
+        // 雙方的統合輸出的差值, 給予方不能小於接受方
+        int damage = max(0, CalculateForce(offender) - CalculateForce(defender));
+        defender.stamina_ -= damage;
+        cout << offender.GetName() << " 攻擊了 " << defender.GetName() << " 造成 " << damage << " 點傷害." << endl;
+    }
     virtual void OnActing() {
         person1_.stamina_ = 100;
         person2_.stamina_ = 100;
@@ -31,18 +56,16 @@ struct Fighting: Action {
         cout << person2_.GetName() << " stamina:" << person2_.stamina_ << endl;
         int count = 10;
         while (person1_.stamina_ > 0 && person2_.stamina_ > 0 && count-- > 0) {
-            person1_.Beat(person2_);
             srand((unsigned)time(NULL));
-            int rest_time = 1 + int((2.0f*(float)rand() / (float)RAND_MAX));
-            std::this_thread::sleep_for(std::chrono::milliseconds(rest_time * 1000));
-            person2_.Beat(person1_);
-            rest_time = 1 + int((2.0f*(float)rand() / (float)RAND_MAX));
-            std::this_thread::sleep_for(std::chrono::milliseconds(rest_time * 1000));
+            Beat(person1_, person2_);
+            SleepRandom(1000, 3000);
+            Beat(person2_, person1_);
+            SleepRandom(1000, 3000);
         }
-        if (person1_.stamina_ > person2_.stamina_)
-            cout << person1_.GetName() << " win!" << endl;
-        else if ((person1_.stamina_ < person2_.stamina_))
-            cout << person2_.GetName() << " win!" << endl;
+        if (person1_.stamina_ != person2_.stamina_) {
+            std::string name = person1_.stamina_ > person2_.stamina_? person1_.GetName(): person2_.GetName();
+            cout << name << " win!" << endl;
+        }
         else
             cout << "draw!" << endl;
     }

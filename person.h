@@ -84,7 +84,7 @@ public:
     // 取得簡述
     std::string GetBrief() {
         std::stringstream ss;
-        ss << "[名字]:" << GetCharacter("name") <<", " << "\t\t[年紀]：" << GetCharacter("age") << " (sec), \t\t[簡介]:" << GetCharacter("brief");
+        ss << "[名字]:" << GetCharacter("name") <<", " << "\t\t[年紀]:" << GetCharacter("age") << " (sec), \t\t[簡介]:" << GetCharacter("brief");
         return ss.str();
     }
     // 列出所有屬性
@@ -92,23 +92,6 @@ public:
         cout << _ShowCharacter(characters_) << endl;
     }
     int stamina_;
-    // 計算統合輸出
-    int GiveForce() {
-        float strengh = atof(GetCharacter("strength", "50").c_str()) * 0.5f;
-        float skill   = atof(GetCharacter("skill", "50").c_str()) * 0.3f; 
-        float speed   = atof(GetCharacter("speed", "50").c_str()) * 0.2f; 
-        float locky = (80.0f + 20.0f * ((float)rand() / (float)RAND_MAX)) / 100.0f;
-        int force = int((strengh + skill + speed) * locky);
-        return force;
-    }
-
-    // 攻擊對手
-    void Beat(Person& enemy) {
-        // 雙方的統合輸出的差值, 給予方不能小於接受方
-        int damage = max(0, GiveForce() - enemy.GiveForce());
-        enemy.stamina_ -= damage;
-        cout << GetName() << " 攻擊了 " << enemy.GetName() << ",  迼成 " << damage << " 點傷害." << endl;
-    }
 };
 
 // 管理所有人物
