@@ -34,9 +34,9 @@ class World : public Prompt<World>
     }
 public:
     World()
-    : timer_thread_(&World::OnTimerThread, this)
+    : actionMgr_(personMgr_)
+    , timer_thread_(&World::OnTimerThread, this)
     , running_(true)
-    , actionMgr_(personMgr_)
     {
         RegisterCmdCallback(&personMgr_);
         RegisterCmdCallback(&actionMgr_);

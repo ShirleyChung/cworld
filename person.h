@@ -183,7 +183,7 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
         return "";
     }
 
-    const std::string ListCommand(const std::string& params) {
+    const std::string ListCommand(const std::string&) {
         cout << "\nList All Commands:" << endl;
         for (CMD_SET::iterator i = cmdSet_.begin(); i != cmdSet_.end(); ++i) {
             cout << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_ << endl;
