@@ -2,11 +2,11 @@
 #define _person_define_2024_
 
 #include <map>
-#include "object.h"
+#include "earthmap.h"
 #include "prompt.h"
 
 /* 定義一個人物的資料 */
-class Person: public JSONObj {
+class Person: public JSONObj, public Object {
     int age;
     std::string name;
     std::string _ShowCharacter(const Value& value) {     
@@ -96,7 +96,7 @@ public:
 
 // 管理所有人物
 #define PERSON_DATA_FILE "data/person.data"
-class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<PersonManager> {
+class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<PersonManager>, public ObjectLcationManager {
     // 建立一個Person
     Person& _CreatePerson(const std::string& name) {
         cout << "Creating " << name << "..." << endl;

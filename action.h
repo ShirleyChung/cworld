@@ -60,8 +60,10 @@ struct Fighting: Action {
         while (person1_.stamina_ > 0 && person2_.stamina_ > 0 && count-- > 0) {
             srand((unsigned)time(NULL));
             Beat(person1_, person2_);
+            if (person1_.stamina_ <= 0 || person2_.stamina_ <= 0) break;
             SleepRandom(500, 1000);
             Beat(person2_, person1_);
+            if (person1_.stamina_ <= 0 || person2_.stamina_ <= 0) break;
             SleepRandom(500, 1000);
             earnExp++;
         }
@@ -77,7 +79,7 @@ struct Fighting: Action {
         int exp = p.GetCharacter("battle_exp", 0);
         int level = p.GetCharacter("battle_level", 0);
         int next_level_exp = p.GetCharacter("next_level_exp", 10 + 2 * level);
-        cout << "獲得 " << earnExp << " 點經驗!";
+        cout << "獲得 " << earnExp << " 點經驗!" << endl;
         exp += earnExp;        
         while (exp >= next_level_exp) {
             level++;
