@@ -4,17 +4,17 @@
 #include "object.h"
 
 // 人事物所在地點
-struct Object {
+struct Location {
     int x_;
     int y_;
     std::string desc_;
 };
 
 // 管理物件所在位置
-class ObjectLcationManager {
-    static std::vector<Object*> obj_list_;
+class LocationManager {
+    static std::vector<Location*> location_list_;
 public:
-    ObjectLcationManager() {}
+    LocationManager() {}
 };
 
 #endif

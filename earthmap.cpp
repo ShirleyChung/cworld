@@ -1,3 +1,3 @@
 #include "earthmap.h"
 
-std::vector<Object*> ObjectLcationManager::obj_list_;
+std::vector<Location*> LocationManager::location_list_;

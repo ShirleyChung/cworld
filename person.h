@@ -6,9 +6,10 @@
 #include "prompt.h"
 
 /* 定義一個人物的資料 */
-class Person: public JSONObj, public Object {
+class Person: public JSONObj {
     int age;
     std::string name;
+    Location loc_;
     std::string _ShowCharacter(const Value& value) {     
         std::stringstream ss;   
         if (value.IsObject()) {
@@ -96,7 +97,13 @@ public:
 
 // 管理所有人物
 #define PERSON_DATA_FILE "data/person.data"
-class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<PersonManager>, public ObjectLcationManager {
+class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<PersonManager>, public LocationManager {
+    Location curBornLocation_;
+
+    const std::string SetBornLocation(int x, int y, const std::string& desc) {
+        curBornLocation_ = Location {x, y, desc};
+        return "";
+    }
     // 建立一個Person
     Person& _CreatePerson(const std::string& name) {
         cout << "Creating " << name << "..." << endl;
