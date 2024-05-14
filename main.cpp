@@ -3,9 +3,13 @@
 
 using namespace std;
 
+extern "C" {
+World w;
+
 int main(int, char* [])
 {
-    World w;
+
     w.run();
 	return 0;
+}
 }
