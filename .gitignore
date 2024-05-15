@@ -1,5 +1,7 @@
 build/*
 build/CMakeFiles/
+third_party
+third_party/*
 *.obj
 *.bin
 .vscode
@@ -7,3 +9,4 @@ cworld
 .scons*
 out
 build_scons
+build_lib

@@ -1,8 +1,9 @@
-{"name":"Adam","brief":"first man","inteligent":1,"life":-1,"age":"13824","strength":"54","skill":"54","speed":"54","battle_exp":"10","battle_level":"4","next_level_exp":"18"}
-{"name":"Sodier","age":"13824","brief":"a normal sodier","strength":"50","skill":"50","speed":"50","battle_exp":"0","battle_level":"1","next_level_exp":"10"}
-{"name":"Alice","age":"13602","brief":"she is a flower keeper.","magic":"955","strength":"50","skill":"50","speed":"50"}
-{"name":"John","age":"13523","brief":"a beliver, who lives in Christ.","strength":"50","skill":"50","speed":"50"}
-{"name":"Joshua","brief":"warriro_savior","age":"19246351","magic":"120","charm":"95","strength":"50","skill":"50","speed":"50"}
-{"name":"上杉謙信","brief":"東北大名","politic":"98","charm":"94","magic":"50","age":"12148","strength":"50","skill":"50","speed":"50"}
-{"name":"井伊直虎","charm":"80","brief":"遠江國國眾井伊氏的當家","fight":"75","politic":"69","age":"10392"}
-{"name":"Herculus","brief":"giant","strenth":"999","speed":"999","skill":"899","age":"8580","strength":"50","battle_exp":"1","battle_level":"0","next_level_exp":"10"}
+{"name":"Adam","brief":"first man","inteligent":1,"life":-1,"age":"13961","strength":"54","skill":"54","speed":"54","battle_exp":"10","battle_level":"4","next_level_exp":"18"}
+{"name":"Sodier","age":"13961","brief":"a normal sodier","strength":"50","skill":"50","speed":"50","battle_exp":"0","battle_level":"1","next_level_exp":"10"}
+{"name":"Alice","age":"13739","brief":"she is a flower keeper.","magic":"955","strength":"50","skill":"50","speed":"50"}
+{"name":"John","age":"13660","brief":"a beliver, who lives in Christ.","strength":"50","skill":"50","speed":"50"}
+{"name":"Joshua","brief":"warriro_savior","age":"19246488","magic":"120","charm":"95","strength":"50","skill":"50","speed":"50"}
+{"name":"上杉謙信","brief":"東北大名","politic":"98","charm":"94","magic":"50","age":"12285","strength":"50","skill":"50","speed":"50"}
+{"name":"井伊直虎","charm":"80","brief":"遠江國國眾井伊氏的當家","fight":"75","politic":"69","age":"10529"}
+{"name":"Herculus","brief":"giant","strenth":"999","speed":"999","skill":"899","age":"8717","strength":"50","battle_exp":"1","battle_level":"0","next_level_exp":"10"}
+{"name":"Billy","brief":"Hero","charm":"120","bravity":"800","strenth":"100","speed":"91","age":"52","strength":"51","skill":"51","battle_exp":"0","battle_level":"1","next_level_exp":"12"}
