@@ -3,6 +3,6 @@ if [ ! -d "build" ]; then
     mkdir build
 fi
 cd build
-cmake ../
+cmake -DBUILD_LIBRARY=OFF -DBUILD_EXECUTABLE=ON ../
 make
 cp cworld ../.
