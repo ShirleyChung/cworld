@@ -40,7 +40,7 @@ public:
     {
         RegisterCmdCallback(&personMgr_);
         RegisterCmdCallback(&actionMgr_);
-        std::cout << "-= World Start =-" << endl;
+        OnOutput(MSG_HINT, "-= World Start =-");
     }
     ~World() {
         running_ = false;

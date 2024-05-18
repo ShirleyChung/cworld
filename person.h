@@ -106,7 +106,9 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
     }
     // 建立一個Person
     Person& _CreatePerson(const std::string& name) {
-        cout << "Creating " << name << "..." << endl;
+        std::stringstream ss;
+        ss << "Creating " << name << "...";
+        OnOutput(MSG_HINT, ss.str().c_str());
         objMap_.push_back(Person("name", name));
         return objMap_.back();
     }
@@ -119,8 +121,9 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
                 Person& np = _CreatePerson(name);
                 np.SetCharacter(key, value);
             }
-        } else
-            cout << "Please specify key. For example, edp person_name name new_name" << endl;
+        } else {
+            OnOutput(MSG_HINT, "Please specify key. For example, edp person_name name new_name");
+        }
     }
     // 刪除Person的屬性
     void DeletePersonCharacter(const std::string& name, const std::string&key) {
@@ -129,7 +132,7 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
                 p->DeleteCharacter(key);
             }
         } else
-            cout << "Please specify key. For example, rmc person_name character" << endl;
+            OnOutput(MSG_HINT, "Please specify key. For example, rmc person_name character");
     }
 
     // 列出人物, 若參數為空白則列出所有
@@ -151,7 +154,7 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
     // 建立一個人物
     const std::string CreatePerson(const std::string& params) {
         if (params.empty()) {
-            cout << "Please input 'Person_name prop_key1 prop_val1 prop_key2 prop_val2 ...'" << endl;
+            OnOutput(MSG_HINT, "Please input 'Person_name prop_key1 prop_val1 prop_key2 prop_val2 ...'");
             return "";
         }
         std::string str = params;
@@ -184,11 +187,13 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
     }
 
     const std::string ListCommand(const std::string&) {
-        cout << "\nList All Commands:" << endl;
+        OnOutput(MSG_INFO, "\nList All Commands:");
         for (CMD_SET::iterator i = cmdSet_.begin(); i != cmdSet_.end(); ++i) {
-            cout << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_ << endl;
+            std::stringstream ss;
+            ss << i->cmd_ << "," << i->alias_ << "\t:" << i->desc_;
+            OnOutput(MSG_INFO, ss.str().c_str());
         }
-        cout << "--\nexit, quit to Quit\n" << endl;
+        OnOutput(MSG_INFO, "--\nexit, quit to Quit\n");
         return "";
     }
 
@@ -199,7 +204,9 @@ class PersonManager: public JSONObjManager<Person>, public CommandFunctionSet<Pe
             objMap_.erase(i);
             return "";
         }
-        cout << name << " not found." << endl;
+        std::stringstream ss;
+        ss << name << " not found.";
+        OnOutput(MSG_HINT, ss.str().c_str());
         return "";
     }
 

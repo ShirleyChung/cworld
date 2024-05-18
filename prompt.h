@@ -5,6 +5,7 @@
 #include <list>
 #include <set>
 #include "utility.h"
+#include "libcworld.h"
 
 // 可讓Promprt指令列註冊呼叫的介面
 struct Commandable {
@@ -91,14 +92,17 @@ public:
         for (typename CMDRCV_LIST::iterator i = cmdrcvList_.begin(); i != cmdrcvList_.end(); ++i) {
             ok |= (*i)->OnCommand(cmd);
         }
-        if (!ok)
-            std::cout << "Unknown command: " << cmd << std::endl;
+        if (!ok) {
+            std::stringstream ss;            
+            ss << "Unknown command: " << cmd;
+            OnOutput(MSG_HINT, ss.str().c_str());
+        }
     }
 
     // 檢查是否Quit
     bool QuitCommand(const std::string& cmd) {
         if (cmd == "quit" || cmd == "exit" || cmd == "q") {
-            std::cout << "Finish process. Bye." << std::endl;
+            OnOutput(MSG_HINT, "Finish process. Bye.");
             return true;
         }
         return false;

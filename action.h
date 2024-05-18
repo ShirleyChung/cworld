@@ -117,10 +117,16 @@ class ActionManager: public CommandFunctionSet<ActionManager> {
             if (Person* p2 = personMgr_.GetIf("name", person2)) {
                 cout << person1 << " attacking " << person2 << endl;
                 act_list_.push_back(new Fighting(*p1, *p2));
-            } else
-                cout << person2 << " not found" << endl;
-        } else
-            cout << person1 << " not found" << endl;
+            } else {
+                std::stringstream ss;
+                ss << person2 << " not found";
+                OnOutput(MSG_HINT, ss.str().c_str());
+            }
+        } else {
+            std::stringstream ss;
+            ss << person1 << " not found";
+            OnOutput(MSG_HINT, ss.str().c_str());
+        }
         return "";
     }
 
