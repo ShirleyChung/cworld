@@ -7,13 +7,6 @@ using namespace std;
 World w;
 CALLBACK cmdCb_ = NULL;
 
-int main(int, char* [])
-{
-
-    w.run();
-    return 0;
-}
-
 /* 從外部輸入指令 */
 void InputCommand(const char* cmd) {
     w.ExecuteCommand(cmd);

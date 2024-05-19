@@ -10,8 +10,13 @@ option(BUILD_EXECUTABLE "Build executable" ON)
 
 if(BUILD_LIBRARY)
     set(CMAKE_SYSTEM_NAME iOS)
-    set(CMAKE_OSX_ARCHITECTURES arm64 armv7)
-    add_library(cworld STATIC earthmap.cpp utility.cpp)
+    # 包含 ios-cmake 工具链
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/third_party/ios-cmake/ios.toolchain.cmake CACHE INTERNAL "")
+
+    # 设置 iOS 平台为 SIMULATOR64
+    set(IOS_PLATFORM SIMULATOR64)
+
+    add_library(cworld STATIC earthmap.cpp utility.cpp cworld.cpp)
 endif()
 
 if(BUILD_EXECUTABLE)
